@@ -23,3 +23,23 @@ converstationRouter.get("/get-all/by-user-id", async (req, res) => {
     res.status(500).json({ message: e.message, success: false, data: [] });
   }
 });
+
+converstationRouter.post("/set", async (req, res) => {
+  try {
+    const { createrId, senderId } = req.body();
+    const conversation = await prisma.conversation.create({
+      data: { createrId: createrId, senderId: senderId },
+    });
+    res.status(200).json({
+      success: true,
+      message: "converstaion create succuess",
+      data: conversation,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
+  }
+});
+
+export default converstationRouter;

@@ -23,14 +23,27 @@ model users {
   senderconversation  conversation[] @relation(name: "senderconversation")
   createAt            DateTime       @default(now())
   updateAt            DateTime?      @updatedAt()
+  message             message[]
 }
 
 model conversation {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   createrId   Int
   senderId    Int
-  createruser users    @relation(fields: [createrId], references: [id], name: "createrconversation")
-  senderuser  users    @relation(fields: [senderId], references: [id], name: "senderconversation")
-  createAt    DateTime @default(now())
-  updateAt    DateTime @updatedAt
+  createruser users     @relation(fields: [createrId], references: [id], name: "createrconversation")
+  senderuser  users     @relation(fields: [senderId], references: [id], name: "senderconversation")
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+  message     message[]
+}
+
+model message {
+  id             Int          @id @default(autoincrement())
+  message        String
+  conversationId Int
+  userid         Int
+  conversation   conversation @relation(fields: [conversationId], references: [id])
+  user           users        @relation(fields: [userid], references: [id])
+  createAt       DateTime     @default(now())
+  updateAt       DateTime?    @updatedAt
 }

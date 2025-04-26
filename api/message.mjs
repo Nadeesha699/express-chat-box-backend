@@ -3,9 +3,9 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const roueterMessage = Router();
+const messageRouter = Router();
 
-roueterMessage.get("/get-all/by-conversation-id", async (req, res) => {
+messageRouter.get("/get-all/by-conversation-id", async (req, res) => {
   try {
     const { id } = req.query;
     const data = await prisma.message.findMany({
@@ -19,7 +19,7 @@ roueterMessage.get("/get-all/by-conversation-id", async (req, res) => {
   }
 });
 
-roueterMessage.post("/set", async (req, res) => {
+messageRouter.post("/set", async (req, res) => {
   try {
     const { message, conversationId, userid } = req.body;
     const messages = await prisma.message.create({
@@ -30,16 +30,16 @@ roueterMessage.post("/set", async (req, res) => {
       },
     });
 
-    res
-      .status(200)
-      .json({
-        data: messages,
-        success: true,
-        message: "message create success",
-      });
+    res.status(200).json({
+      data: messages,
+      success: true,
+      message: "message create success",
+    });
   } catch (error) {
     res
       .status(500)
       .json({ data: null, success: false, message: error.message });
   }
 });
+
+export default messageRouter;

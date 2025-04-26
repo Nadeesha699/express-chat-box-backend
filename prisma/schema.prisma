@@ -15,8 +15,8 @@ datasource db {
 }
 
 model users {
-  id      Int     @id @default(autoincrement())
-  name    String?
-  age     Int?
-  address String?
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  email    String?
+  password String?
 }

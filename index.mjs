@@ -1,14 +1,17 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import userRouter from "./api/user.mjs";
 
-const prisma = new PrismaClient();
 
 const server = express();
+server.use(express.json());
+server.use('/api/users',userRouter)
 
-server.get("/api/users/get-all", async (_, res) => {
-  const users = await prisma.users.findMany();
-  res.json({ data: users });
-});
+// server.get("/api/users/get-all", async (_, res) => {
+//   const users = await prisma.users.findMany();
+//   res.json({ data: users });
+// });
+
+
 
 server.listen(4000, () => {
   console.log("server is running...");

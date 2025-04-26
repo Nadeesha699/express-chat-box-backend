@@ -8,9 +8,10 @@ const prisma = new PrismaClient();
 
 converstationRouter.get("/get-all/by-user-id", async (req, res) => {
   try {
-    const id = req.query;
+    const { id } = req.query;
     const resp = await prisma.conversation.findMany({
-      where: { OR: [{ createrId: id }, { senderId: id }] },
+      where: { OR: [{ createrId: parseInt(id) }, { senderId: parseInt(id) }] },
+      include: { createruser: true, senderuser: true },
     });
     resp !== null
       ? res
@@ -26,7 +27,7 @@ converstationRouter.get("/get-all/by-user-id", async (req, res) => {
 
 converstationRouter.post("/set", async (req, res) => {
   try {
-    const { createrId, senderId } = req.body();
+    const { createrId, senderId } = req.body;
     const conversation = await prisma.conversation.create({
       data: { createrId: createrId, senderId: senderId },
     });

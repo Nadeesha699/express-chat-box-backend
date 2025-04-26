@@ -15,8 +15,22 @@ datasource db {
 }
 
 model users {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
-  email    String?
-  password String?
+  id                  Int            @id @default(autoincrement())
+  username            String         @unique
+  email               String
+  password            String
+  createrconversation conversation[] @relation(name: "createrconversation")
+  senderconversation  conversation[] @relation(name: "senderconversation")
+  createAt            DateTime       @default(now())
+  updateAt            DateTime?      @updatedAt()
+}
+
+model conversation {
+  id          Int      @id @default(autoincrement())
+  createrId   Int
+  senderId    Int
+  createruser users    @relation(fields: [createrId], references: [id], name: "createrconversation")
+  senderuser  users    @relation(fields: [senderId], references: [id], name: "senderconversation")
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
 }

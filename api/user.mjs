@@ -17,22 +17,40 @@ userRouter.post("/set", async (req, res) => {
         password: hashpassword,
       },
     });
-    res.status(200).json({ data: resp, error: false, message: "success" });
+    res
+      .status(200)
+      .json({ data: resp, message: "register success", success: true });
   } catch (error) {
-    res.status(500).json({ data: null, error: true, message: error });
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
   }
 });
 
 userRouter.get("/login", async (req, res) => {
-  const { username, password } = req.query;
-  const resp = await prisma.users.findUnique({
-    where: { username: username },
-  });
-  if (resp.id !== undefined) {
-    const result = await bcrypt.compare(password, resp.password);
-    result === true
-      ? res.status(200).json({ message: "success", data: resp })
-      : res.status(200).json({ message: "unsuccess", data: null });
+  try {
+    const { username, password } = req.query;
+    const resp = await prisma.users.findUnique({
+      where: { username: username },
+    });
+    if (resp.id !== undefined) {
+      const result = await bcrypt.compare(password, resp.password);
+      result === true
+        ? res
+            .status(200)
+            .json({ success: true, message: "login success", data: resp })
+        : res
+            .status(401)
+            .json({ data: null, success: false, message: "wrong candidate" });
+    } else {
+      res
+        .status(401)
+        .json({ data: null, success: false, message: "wrong candidate" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
   }
 });
 

@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
+import prisma from "../database/db.mjs";
 
 const userRouter = Router();
 
@@ -10,6 +8,7 @@ userRouter.post("/set", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const hashpassword = await bcrypt.hash(password, 10);
+    
     const resp = await prisma.users.create({
       data: {
         username: username,

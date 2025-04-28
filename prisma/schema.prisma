@@ -42,6 +42,7 @@ model message {
   message        String
   conversationId Int
   userid         Int
+  read           Boolean      @default(false)
   conversation   conversation @relation(fields: [conversationId], references: [id])
   user           users        @relation(fields: [userid], references: [id])
   createAt       DateTime     @default(now())

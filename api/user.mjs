@@ -53,4 +53,16 @@ userRouter.get("/login", async (req, res) => {
   }
 });
 
+userRouter.get('/get-all',async (_,res)=>{
+  try {
+    const users =  await prisma.users.findMany()
+  res.status(200).json({success:true,message:"success", data: users})
+  } catch (error) {
+    res
+    .status(500)
+    .json({ success: false, message: error.message, data: null });
+  }
+
+})
+
 export default userRouter;

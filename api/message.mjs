@@ -17,6 +17,27 @@ messageRouter.get("/get-all/by-conversation-id", async (req, res) => {
   }
 });
 
+messageRouter.get(
+  "/get-all/unread-messages/by-conversation-id",
+  async (req, res) => {
+    try {
+      const { id } = req.query;
+      const data = await prisma.message.findMany({
+        where: { conversationId: parseInt(id), read: false },
+        include: { user: true },
+      });
+
+      res
+        .status(200)
+        .json({ data: data.length, success: true, message: "success" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ data: [], success: false, message: error.message });
+    }
+  }
+);
+
 messageRouter.post("/set", async (req, res) => {
   try {
     const { message, conversationId, userid } = req.body;
@@ -38,6 +59,15 @@ messageRouter.post("/set", async (req, res) => {
       .status(500)
       .json({ data: null, success: false, message: error.message });
   }
+});
+
+messageRouter.put("/update/by-conversation-id", async (req, res) => {
+  const {id} = req.query;
+  const result = await prisma.message.updateMany({
+    data: { read: true },
+    where: { conversationId: parseInt(id) },
+  });
+  res.json({ data: result, success: true, message: "update success" });
 });
 
 export default messageRouter;

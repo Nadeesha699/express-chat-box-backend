@@ -32,7 +32,7 @@ userRouter.get("/login", async (req, res) => {
     const resp = await prisma.users.findUnique({
       where: { username: username },
     });
-    if (resp.id !== undefined) {
+    if (resp !== null) {
       const result = await bcrypt.compare(password, resp.password);
       result === true
         ? res

@@ -26,9 +26,9 @@ userRouter.post("/set", async (req, res) => {
   }
 });
 
-userRouter.get("/login", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.query;
+    const { username, password } = req.body;
     const resp = await prisma.users.findUnique({
       where: { username: username },
     });

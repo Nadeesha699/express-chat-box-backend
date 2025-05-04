@@ -61,13 +61,26 @@ messageRouter.post("/set", async (req, res) => {
   }
 });
 
+
 messageRouter.put("/update/by-conversation-id", async (req, res) => {
-  const {id} = req.query;
-  const result = await prisma.message.updateMany({
-    data: { read: true },
-    where: { conversationId: parseInt(id) },
-  });
-  res.json({ data: result, success: true, message: "update success" });
+  const { id } = req.query;
+
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(400).json({ success: false, message: "Invalid or missing 'id' query parameter" });
+  }
+
+  try {
+    const result = await prisma.message.updateMany({
+      data: { read: true },
+      where: { conversationId: parseInt(id) },
+    });
+
+    res.json({ data: result, success: true, message: "update success" });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 });
+
 
 export default messageRouter;

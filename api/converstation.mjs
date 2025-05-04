@@ -1,5 +1,5 @@
 import { Router } from "express";
-import prisma from "../database/db.mjs"
+import prisma from "../database/db.mjs";
 
 const converstationRouter = Router();
 
@@ -17,6 +17,32 @@ converstationRouter.get("/get-all/by-user-id", async (req, res) => {
       : res
           .status(200)
           .json({ data: [], message: "no data found", success: true });
+  } catch (e) {
+    res.status(500).json({ message: e.message, success: false, data: [] });
+  }
+});
+
+converstationRouter.get("/get-all/by-user-id/for-verfiy", (req, res) => {
+  try {
+    const { uid, fid } = req.query;
+    prisma.conversation
+      .findMany({
+        where: {
+          OR: [
+            { createrId: parseInt(uid), senderId: parseInt(fid) },
+            { createrId: parseInt(fid), senderId: parseInt(uid) },
+          ],
+        },
+      })
+      .then((e) => {
+        e !== null
+          ? res
+              .status(200)
+              .json({ data: e, message: "data founded", success: true })
+          : res
+              .status(200)
+              .json({ data: [], message: "no data found", success: true });
+      });
   } catch (e) {
     res.status(500).json({ message: e.message, success: false, data: [] });
   }

@@ -32,7 +32,7 @@ converstationRouter.get("/get-all/by-user-id/for-verfiy", (req, res) => {
             { createrId: parseInt(uid), senderId: parseInt(fid) },
             { createrId: parseInt(fid), senderId: parseInt(uid) },
           ],
-        },
+        },include: { createruser: true, senderuser: true },
       })
       .then((e) => {
         e !== null

@@ -32,7 +32,8 @@ converstationRouter.get("/get-all/by-user-id/for-verfiy", (req, res) => {
             { createrId: parseInt(uid), senderId: parseInt(fid) },
             { createrId: parseInt(fid), senderId: parseInt(uid) },
           ],
-        },include: { createruser: true, senderuser: true },
+        },
+        include: { createruser: true, senderuser: true },
       })
       .then((e) => {
         e !== null
@@ -64,6 +65,14 @@ converstationRouter.post("/set", async (req, res) => {
       .status(500)
       .json({ success: false, message: error.message, data: null });
   }
+});
+
+converstationRouter.delete("/delete/by-id", async (req, res) => {
+  const { id } = req.query;
+  await prisma.conversation.delete({ where: { id: id } });
+  res
+    .status(200)
+    .json({ message: "delete success", success: true, error: null });
 });
 
 export default converstationRouter;

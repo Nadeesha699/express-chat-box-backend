@@ -69,7 +69,7 @@ converstationRouter.post("/set", async (req, res) => {
 
 converstationRouter.delete("/delete/by-id", async (req, res) => {
   const { id } = req.query;
-  await prisma.conversation.delete({ where: { id: id } });
+  await prisma.conversation.delete({ where: { id: parseInt(id) } });
   res
     .status(200)
     .json({ message: "delete success", success: true, error: null });

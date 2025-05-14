@@ -43,7 +43,7 @@ model message {
   conversationId Int
   userid         Int
   read           Boolean      @default(false)
-  conversation   conversation @relation(fields: [conversationId], references: [id])
+  conversation   conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   user           users        @relation(fields: [userid], references: [id])
   createAt       DateTime     @default(now())
   updateAt       DateTime?    @updatedAt

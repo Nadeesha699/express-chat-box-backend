@@ -87,9 +87,9 @@ messageRouter.put("/update/by-conversation-id", async (req, res) => {
 messageRouter.put("/update/by-id", async (req, res) => {
   try {
     const { id } = req.query;
-    const messageData = req.body;
+    const { message } = req.body;
     const response = await prisma.message.update({
-      data: messageData,
+      data: { message: message,createAt:new Date() },
       where: { id: Number(id) },
     });
     res.status(200).json({ data: response, success: true, error: null });

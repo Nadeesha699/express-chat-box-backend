@@ -61,12 +61,14 @@ messageRouter.post("/set", async (req, res) => {
   }
 });
 
-
 messageRouter.put("/update/by-conversation-id", async (req, res) => {
   const { id } = req.query;
 
   if (!id || isNaN(parseInt(id))) {
-    return res.status(400).json({ success: false, message: "Invalid or missing 'id' query parameter" });
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or missing 'id' query parameter",
+    });
   }
 
   try {
@@ -82,5 +84,30 @@ messageRouter.put("/update/by-conversation-id", async (req, res) => {
   }
 });
 
+messageRouter.put("/update/by-id", async (req, res) => {
+  try {
+    const { id } = req.query;
+    const messageData = req.body;
+    const response = await prisma.message.update({
+      data: messageData,
+      where: { id: Number(id) },
+    });
+    res.status(200).json({ data: response, success: true, error: null });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ data: null, success: false, message: error.message });
+  }
+});
+
+messageRouter.delete("/delete/by-id", async (req, res) => {
+  try {
+    const { id } = req.query;
+    await prisma.message.delete({ where: { id: Number(id) } });
+    res.status(200).json({ message: "delete success", error: null });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 export default messageRouter;

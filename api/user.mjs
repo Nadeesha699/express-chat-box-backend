@@ -76,4 +76,56 @@ userRouter.get("/get-user/by-id", async (req, res) => {
   }
 });
 
+userRouter.post("/password-verify/by-id", async (req, res) => {
+  try {
+    const { password } = req.body;
+    const { id } = req.query;
+    const result = await prisma.users.findUnique({ where: { id: Number(id) } });
+    const valid = await bcrypt.compare(password, result.password);
+    if (valid) {
+      res
+        .status(200)
+        .json({ success: true, message: "password verify", data: valid });
+    } else {
+      res
+        .status(200)
+        .json({ success: false, message: "password not verify", data: valid });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+userRouter.put("/update/by-id", async (req, res) => {
+  try {
+    const { password, email, username } = req.body;
+    const { id } = req.query;
+
+    let hashedPassword = password;
+
+    if (
+      !(
+        typeof password === "string" &&
+        password.length === 60 &&
+        /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(password)
+      )
+    ) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const result = await prisma.users.update({
+      where: { id: Number(id) },
+      data: { email: email, password: hashedPassword, username: username },
+    });
+
+    res
+      .status(200)
+      .json({ data: result, success: true, message: "update success" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
+  }
+});
+
 export default userRouter;

@@ -11,9 +11,6 @@ server.use(cors())
 server.use("/api/users", userRouter);
 server.use("/api/conversation", converstationRouter);
 server.use("/api/message", messageRouter);
-server.get("/test", (req, res) => {
-  res.json({ message: "hello" });
-});
 
 server.listen(4000, () => {
   console.log("server is running...");

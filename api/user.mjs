@@ -8,7 +8,7 @@ userRouter.post("/set", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const hashpassword = await bcrypt.hash(password, 10);
-    
+
     const resp = await prisma.users.create({
       data: {
         username: username,
@@ -53,16 +53,27 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-userRouter.get('/get-all',async (_,res)=>{
+userRouter.get("/get-all", async (_, res) => {
   try {
-    const users =  await prisma.users.findMany()
-  res.status(200).json({success:true,message:"success", data: users})
+    const users = await prisma.users.findMany();
+    res.status(200).json({ success: true, message: "success", data: users });
   } catch (error) {
     res
-    .status(500)
-    .json({ success: false, message: error.message, data: null });
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
   }
+});
 
-})
+userRouter.get("/get-user/by-id", async (req, res) => {
+  try {
+    const { id } = req.query;
+    const users = await prisma.users.findUnique({ where: { id: Number(id) } });
+    res.status(200).json({ success: true, message: "success", data: users });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
+  }
+});
 
 export default userRouter;

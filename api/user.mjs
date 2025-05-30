@@ -101,26 +101,37 @@ userRouter.put("/update/by-id", async (req, res) => {
     const { password, email, username } = req.body;
     const { id } = req.query;
 
-    let hashedPassword = password;
+    if (password === null) {
+      const result = await prisma.users.update({
+        where: { id: Number(id) },
+        data: { email: email, username: username },
+      });
 
-    if (
-      !(
-        typeof password === "string" &&
-        password.length === 60 &&
-        /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(password)
-      )
-    ) {
-      hashedPassword = await bcrypt.hash(password, 10);
+      res
+        .status(200)
+        .json({ data: result, success: true, message: "update success" });
+    } else {
+      let hashedPassword = password;
+
+      if (
+        !(
+          typeof password === "string" &&
+          password.length === 60 &&
+          /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(password)
+        )
+      ) {
+        hashedPassword = await bcrypt.hash(password, 10);
+      }
+
+      const result = await prisma.users.update({
+        where: { id: Number(id) },
+        data: { email: email, password: hashedPassword, username: username },
+      });
+
+      res
+        .status(200)
+        .json({ data: result, success: true, message: "update success" });
     }
-
-    const result = await prisma.users.update({
-      where: { id: Number(id) },
-      data: { email: email, password: hashedPassword, username: username },
-    });
-
-    res
-      .status(200)
-      .json({ data: result, success: true, message: "update success" });
   } catch (error) {
     res
       .status(500)
